@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
@@ -15,9 +16,14 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('products.index');
+        $products = Product::orderBy('id', 'desc');
+        if ($request->filled('title')) {
+            $products = $products->where('title', $request->input('title'));
+        }
+        $products = $products->paginate(5);
+        return view('products.index')->with(compact('products'));
     }
 
     /**
@@ -39,7 +45,34 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required',
+            'sku' => 'required',
+        ]);
 
+        $res = [];
+
+        $product = Product::create($request->all());
+        if ($product) {
+            if ($request->has('files')) {
+                $fileName = time() .'.'. $request->file('files')->getClientOriginalExtension();
+                $request->file('files')->move(public_path('uploads/products'), $fileName);
+
+                $productImage = ProductImage::create([
+                    'product_id' => $product->id,
+                    'file_path' => 'uploads/products/'.$fileName,
+                    'thumbnail' => true,
+                ]);
+            }
+
+            $res['status'] = 'success';
+            $res['message'] = 'Product successfully added.';
+        } else {
+            $res['status'] = 'fail';
+            $res['message'] = 'Product could not be added.';
+        }
+
+        return response()->json($res);
     }
 
 

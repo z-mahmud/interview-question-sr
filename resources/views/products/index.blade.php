@@ -52,24 +52,25 @@
 
                     <tbody>
 
+                    @foreach($products as $key => $product)
                     <tr>
-                        <td>1</td>
-                        <td>T-Shirt <br> Created at : 25-Aug-2020</td>
-                        <td>Quality product in low cost</td>
+                        <td>{{ $key + $products->firstItem() }}</td>
+                        <td>{{ $product->title }} <br> Created at : {{ date('d-M-Y', strtotime($product->created_at)) }}</td>
+                        <td>{{ $product->description }}</td>
                         <td>
-                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
+{{--                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">--}}
 
-                                <dt class="col-sm-3 pb-0">
-                                    SM/ Red/ V-Nick
-                                </dt>
-                                <dd class="col-sm-9">
-                                    <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : {{ number_format(200,2) }}</dt>
-                                        <dd class="col-sm-8 pb-0">InStock : {{ number_format(50,2) }}</dd>
-                                    </dl>
-                                </dd>
-                            </dl>
-                            <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
+{{--                                <dt class="col-sm-3 pb-0">--}}
+{{--                                    SM/ Red/ V-Nick--}}
+{{--                                </dt>--}}
+{{--                                <dd class="col-sm-9">--}}
+{{--                                    <dl class="row mb-0">--}}
+{{--                                        <dt class="col-sm-4 pb-0">Price : {{ number_format(200,2) }}</dt>--}}
+{{--                                        <dd class="col-sm-8 pb-0">InStock : {{ number_format(50,2) }}</dd>--}}
+{{--                                    </dl>--}}
+{{--                                </dd>--}}
+{{--                            </dl>--}}
+{{--                            <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>--}}
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
@@ -77,6 +78,7 @@
                             </div>
                         </td>
                     </tr>
+                    @endforeach
 
                     </tbody>
 
@@ -86,14 +88,17 @@
         </div>
 
         <div class="card-footer">
-            <div class="row justify-content-between">
-                <div class="col-md-6">
-                    <p>Showing 1 to 10 out of 100</p>
-                </div>
-                <div class="col-md-2">
-
-                </div>
+            <div class="paginator mt-2">
+                {{ $products->appends(request()->input())->links() }}
             </div>
+{{--            <div class="row justify-content-between">--}}
+{{--                <div class="col-md-6">--}}
+{{--                    <p>Showing 1 to 10 out of 100</p>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-2">--}}
+
+{{--                </div>--}}
+{{--            </div>--}}
         </div>
     </div>
 
